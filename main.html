@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Sabela</title>
+
+<style>
+
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+}
+
+body{
+    overflow:hidden;
+    background:black;
+    width:100vw;
+    height:100vh;
+    font-family:Arial, sans-serif;
+    position:relative;
+}
+
+/* Fundo */
+#background{
+    position:fixed;
+    inset:0;
+    background:black;
+    background-size:cover;
+    background-position:center;
+    transition:1.5s ease;
+    z-index:-2;
+}
+
+/* Escurecimento */
+#overlay{
+    position:fixed;
+    inset:0;
+    background:rgba(0,0,0,0.7);
+    transition:1.5s;
+    z-index:-1;
+}
+
+/* Texto */
+#message{
+    position:absolute;
+    width:100%;
+    text-align:center;
+    top:10%;
+    color:white;
+    font-size:40px;
+    opacity:0;
+    transition:1s;
+    text-shadow:0 0 20px pink;
+}
+
+/* Cadeado */
+#lock{
+    position:absolute;
+    width:180px;
+    top:50%;
+    left:50%;
+    transform:translate(-50%, -50%);
+    user-select:none;
+}
+
+/* Chave */
+#key{
+    position:absolute;
+    width:120px;
+    bottom:40px;
+    right:40px;
+    cursor:grab;
+    user-select:none;
+}
+
+/* Corações pequenos */
+.heart{
+    position:absolute;
+    pointer-events:none;
+    animation:floatAround linear forwards;
+}
+
+@keyframes floatAround{
+
+    0%{
+        transform:
+        translate(0,0)
+        scale(0.5)
+        rotate(0deg);
+
+        opacity:0;
+    }
+
+    20%{
+        opacity:1;
+    }
+
+    100%{
+        transform:
+        translateY(-200px)
+        scale(1.2)
+        rotate(360deg);
+
+        opacity:0;
+    }
+}
+
+</style>
+</head>
+
+<body>
+
+<div id="background"></div>
+<div id="overlay"></div>
+
+<div id="message">
+Amoce🩷
+</div>
+
+<!-- CADEADO -->
+<img
+id="lock"
+src="cadeado.png"
+draggable="false"
+>
+
+<!-- CHAVE -->
+<img
+id="key"
+src="chave.png"
+draggable="true"
+>
+
+<!-- MÚSICA -->
+<audio id="music" loop>
+    <source src="musica.mp3" type="audio/mp3">
+</audio>
+
+<script>
+
+const key = document.getElementById("key");
+const lock = document.getElementById("lock");
+const background = document.getElementById("background");
+const overlay = document.getElementById("overlay");
+const music = document.getElementById("music");
+const message = document.getElementById("message");
+
+let unlocked = false;
+
+/* Arrastar chave */
+key.addEventListener("dragstart", (e)=>{
+    e.dataTransfer.setData("text/plain", "key");
+});
+
+/* Permitir soltar */
+lock.addEventListener("dragover", (e)=>{
+    e.preventDefault();
+});
+
+/* Quando encaixar */
+lock.addEventListener("drop", (e)=>{
+    e.preventDefault();
+
+    if(unlocked) return;
+    unlocked = true;
+
+    unlockLove();
+});
+
+/* Desbloquear */
+function unlockLove(){
+
+    /* TROQUE PELA SUA FOTO */
+    background.style.backgroundImage =
+    "url('sabela.jpg')";
+
+    overlay.style.background =
+    "rgba(0,0,0,0.2)";
+
+    /* Tocar música */
+    music.play();
+
+    /* Mostrar texto */
+    message.style.opacity = "1";
+
+    /* Esconder chave */
+    key.style.display = "none";
+
+    /* Criar mini corações */
+    setInterval(createHeart, 400);
+}
+
+/* Criar vários mini gifs */
+function createHeart(){
+
+    for(let i = 0; i < 8; i++){
+
+        const heart =
+        document.createElement("img");
+
+        /* GIF coração */
+        heart.src =
+        "coracao.png";
+
+        heart.classList.add("heart");
+
+        /* Posição aleatória */
+        heart.style.left =
+        Math.random() * window.innerWidth + "px";
+
+        heart.style.top =
+        Math.random() * window.innerHeight + "px";
+
+        /* Pequenos */
+        const size =
+        Math.random() * 25 + 20;
+
+        heart.style.width =
+        size + "px";
+
+        /* Velocidade aleatória */
+        heart.style.animationDuration =
+        (Math.random() * 3 + 2) + "s";
+
+        document.body.appendChild(heart);
+
+        setTimeout(()=>{
+            heart.remove();
+        }, 5000);
+    }
+}
+
+</script>
+
+</body>
+</html>
+```

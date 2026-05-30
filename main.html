@@ -218,7 +218,17 @@ function unlockLove(){
     "rgba(0,0,0,0.2)";
 
     /* Tocar música */
-    music.play();
+    music.currentTime = 0;
+
+const playPromise = music.play();
+
+if (playPromise !== undefined) {
+    playPromise.catch(() => {
+        document.body.addEventListener("touchstart", () => {
+            music.play();
+        }, { once: true });
+    });
+}
 
     /* Mostrar texto */
     message.style.opacity = "1";

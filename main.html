@@ -150,24 +150,62 @@ const message = document.getElementById("message");
 let unlocked = false;
 
 /* Arrastar chave */
-key.addEventListener("dragstart", (e)=>{
-    e.dataTransfer.setData("text/plain", "key");
-});
+let isDragging = false;
 
-/* Permitir soltar */
-lock.addEventListener("dragover", (e)=>{
-    e.preventDefault();
-});
+key.addEventListener("mousedown", startDrag);
+key.addEventListener("touchstart", startDrag);
 
-/* Quando encaixar */
-lock.addEventListener("drop", (e)=>{
-    e.preventDefault();
+document.addEventListener("mousemove", drag);
+document.addEventListener("touchmove", drag);
 
-    if(unlocked) return;
-    unlocked = true;
+document.addEventListener("mouseup", stopDrag);
+document.addEventListener("touchend", stopDrag);
 
-    unlockLove();
-});
+function startDrag(){
+    isDragging = true;
+}
+
+function drag(e){
+
+    if(!isDragging || unlocked) return;
+
+    let clientX;
+    let clientY;
+
+    if(e.touches){
+        clientX = e.touches[0].clientX;
+        clientY = e.touches[0].clientY;
+    }else{
+        clientX = e.clientX;
+        clientY = e.clientY;
+    }
+
+    key.style.left = (clientX - 60) + "px";
+    key.style.top = (clientY - 60) + "px";
+
+    checkCollision();
+}
+
+function stopDrag(){
+    isDragging = false;
+}
+
+function checkCollision(){
+
+    const lockRect = lock.getBoundingClientRect();
+    const keyRect = key.getBoundingClientRect();
+
+    const touching =
+        keyRect.left < lockRect.right &&
+        keyRect.right > lockRect.left &&
+        keyRect.top < lockRect.bottom &&
+        keyRect.bottom > lockRect.top;
+
+    if(touching && !unlocked){
+        unlocked = true;
+        unlockLove();
+    }
+}
 
 /* Desbloquear */
 function unlockLove(){
@@ -236,4 +274,3 @@ function createHeart(){
 
 </body>
 </html>
-```
